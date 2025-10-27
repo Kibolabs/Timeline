@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kina & Leni Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .timeline-wrapper {
+            position: relative;
+            margin: 40px 0;
+            padding: 40px 20px;
+        }
+        
+        .timeline-container {
+            position: relative;
+            padding: 60px 0;
+        }
+        
+        .center-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transform: translateX(-50%);
+        }
+        
+        .year-marker {
+            position: relative;
+            margin: 80px 0;
+        }
+        
+        .year-label {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #764ba2;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+            z-index: 10;
+        }
+        
+        .year-age {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 50px;
+            font-size: 0.9em;
+            color: #666;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .events-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 80px;
+        }
+        
+        .person-events {
+            position: relative;
+        }
+        
+        .person-events.kina {
+            text-align: right;
+            padding-right: 40px;
+        }
+        
+        .person-events.leni {
+            text-align: left;
+            padding-left: 40px;
+        }
+        
+        .event-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .person-events.kina .event-card {
+            border-left: 5px solid #e91e63;
+        }
+        
+        .person-events.leni .event-card {
+            border-right: 5px solid #2196f3;
+        }
+        
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30px;
+            height: 3px;
+            background: #ddd;
+        }
+        
+        .person-events.kina .event-card::before {
+            right: -30px;
+        }
+        
+        .person-events.leni .event-card::before {
+            left: -30px;
+        }
+        
+        .event-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #ddd;
+        }
+        
+        .person-events.kina .event-card::after {
+            right: -46px;
+        }
+        
+        .person-events.leni .event-card::after {
+            left: -46px;
+        }
+        
+        .event-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .event-type.professional {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .event-type.personal {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        
+        .event-text {
+            font-size: 1em;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .event-card.milestone {
+            background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+            font-weight: 600;
+        }
+        
+        .event-card.milestone .event-text::before {
+            content: '✓ ';
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .event-card.milestone::after {
+            border-color: #4caf50;
+            background: #4caf50;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1em;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .legend-color.kina {
+            background: #e91e63;
+        }
+        
+        .legend-color.leni {
+            background: #2196f3;
+        }
+        
+        .legend-color.professional {
+            background: #e3f2fd;
+            border: 2px solid #1976d2;
+        }
+        
+        .legend-color.personal {
+            background: #fce4ec;
+            border: 2px solid #c2185b;
+        }
+        
+        .legend-color.milestone {
+            background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+            border: 2px solid #4caf50;
+        }
+        
+        .conflict-banner {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 3px solid #ffc107;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 50px;
+            text-align: center;
+        }
+        
+        .conflict-banner h2 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .conflict-banner p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .conflict-highlight {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #ff6b6b;
+        }
+        
+        @media (max-width: 1024px) {
+            .events-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .person-events.kina,
+            .person-events.leni {
+                text-align: left;
+                padding-left: 40px;
+                padding-right: 0;
+            }
+            
+            .person-events.kina .event-card::before,
+            .person-events.kina .event-card::after {
+                left: -30px;
+                right: auto;
+            }
+            
+            .person-events.kina .event-card::after {
+                left: -46px;
+            }
+            
+            .center-line {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kina & Leni: Life Timeline</h1>
+        <div class="subtitle">Planning Your Future Together (2025-2033)</div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color kina"></div>
+                <span><strong>Kina</strong></span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color leni"></div>
+                <span><strong>Leni</strong></span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color professional"></div>
+                <span>Professional Goal</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color personal"></div>
+                <span>Personal Goal</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color milestone"></div>
+                <span>Major Milestone</span>
+            </div>
+        </div>
+        
+        <div class="timeline-wrapper">
+            <div class="timeline-container">
+                <div class="center-line"></div>
+                
+                <!-- 2025 -->
+                <div class="year-marker">
+                    <div class="year-label">2025</div>
+                    <div class="year-age">Kina: 32 | Leni: 35</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Continuing Masters program</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Focus on studies and relationship</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Working towards promotion</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Strengthening relationship with Kina</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2026 -->
+                <div class="year-marker">
+                    <div class="year-label">2026</div>
+                    <div class="year-age">Kina: 33 | Leni: 36</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card milestone">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Completes Masters degree</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Beginning wedding planning</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Continuing work in current role</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Wedding planning with Kina</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2027 -->
+                <div class="year-marker">
+                    <div class="year-label">2027</div>
+                    <div class="year-age">Kina: 34 | Leni: 37</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Pursuing writing projects</div>
+                            </div>
+                            <div class="event-card milestone">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Gets married to Leni</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Continuing professional development</div>
+                            </div>
+                            <div class="event-card milestone">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Gets married to Kina</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2028 -->
+                <div class="year-marker">
+                    <div class="year-label">2028</div>
+                    <div class="year-age">Kina: 35 | Leni: 38</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Considering PhD programs & writing</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Discussing family planning timeline</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card milestone">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Promotion to Senior Lecturer</div>
+                            </div>
+                            <div class="event-card milestone">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Wants to have first child (ideal timeline)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2029 -->
+                <div class="year-marker">
+                    <div class="year-label">2029</div>
+                    <div class="year-age">Kina: 36 | Leni: 39</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Potentially beginning PhD program</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Adjusting family plans</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Establishing himself as Senior Lecturer</div>
+                            </div>
+                            <div class="event-card milestone">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Maximum timeline for having child</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2030 -->
+                <div class="year-marker">
+                    <div class="year-label">2030</div>
+                    <div class="year-age">Kina: 37 | Leni: 40</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">PhD studies in progress</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Balancing studies with family</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Senior Lecturer, building research profile</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Supporting Kina's PhD journey</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2031 -->
+                <div class="year-marker">
+                    <div class="year-label">2031</div>
+                    <div class="year-age">Kina: 38 | Leni: 41</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">PhD research in progress</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Family life</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card milestone">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Promotion to Professor</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Supporting family</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2032 -->
+                <div class="year-marker">
+                    <div class="year-label">2032</div>
+                    <div class="year-age">Kina: 39 | Leni: 42</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Completing PhD research & dissertation</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Preparing for post-PhD life</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Continuing as Professor</div>
+                            </div>
+                            <div class="event-card">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Family support</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2033 -->
+                <div class="year-marker">
+                    <div class="year-label">2033</div>
+                    <div class="year-age">Kina: 40 | Leni: 43</div>
+                    <div class="events-container">
+                        <div class="person-events kina">
+                            <div class="event-card milestone">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Completing PhD (before 40) & writing</div>
+                            </div>
+                            <div class="event-card milestone">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Ready to have a child (post-PhD goal)</div>
+                            </div>
+                        </div>
+                        <div class="person-events leni">
+                            <div class="event-card">
+                                <span class="event-type professional">Professional</span>
+                                <div class="event-text">Established Professor</div>
+                            </div>
+                            <div class="event-card milestone">
+                                <span class="event-type personal">Personal</span>
+                                <div class="event-text">Welcoming Second child (timing TBD)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conflict Banner -->
+        <div class="conflict-banner">
+            <h2>⚠️ Critical Timeline Conflict</h2>
+            <p>
+                <strong>Leni's Child Timeline:</strong> Wants first child by 2028-2029 (in 3-4 years)<br>
+                <strong>Kina's Child Timeline:</strong> Prefers child after PhD completion (2033-2034)
+            </p>
+            <div class="conflict-highlight">
+                <strong>Gap: 4-5 years difference</strong><br>
+                This requires open communication and compromise. Consider: having a child during PhD studies, starting PhD earlier, fertility preservation options, or adjusting both timelines to meet in the middle.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
